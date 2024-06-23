@@ -1,4 +1,3 @@
-from pprint import pprint
 from flask import Flask, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Api, Resource, fields, inputs
@@ -6,8 +5,9 @@ from sqlalchemy.exc import IntegrityError
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_httpauth import HTTPBasicAuth
+from flask_apscheduler import APScheduler
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from Database import *
 
@@ -22,6 +22,24 @@ migrate = Migrate(app, db)
 db.init_app(app)
 api = Api(app)
 auth = HTTPBasicAuth()
+
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
+
+
+@scheduler.task('interval', id='cleanup', hours=1)
+def cleanup():
+    now = datetime.now()
+    threshold = (now - timedelta(days=10)).astimezone()
+
+    with app.app_context():
+        query = db.delete(Database.Readings).where(
+            Database.Readings.timestamp < threshold)
+        result = db.session.execute(query)
+        print(f"Readings cleanup: {result.rowcount} readings deleted")
+
+        db.session.commit()
 
 
 @auth.verify_password

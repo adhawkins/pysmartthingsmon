@@ -1,4 +1,5 @@
 sqlalchemy
+Flask-APScheduler
 Flask-SQLAlchemy
 Flask-restx
 flask-httpauth
