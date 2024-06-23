@@ -1,0 +1,11 @@
+[Unit]
+Description=PySmartThingsMon service
+After=network.target
+
+[Service]
+WorkingDirectory=/home/andy/software/pysmartthingsmon/webservice
+Environment="PATH=/home/andy/software/pysmartthingsmon/webservice/venv/bin"
+ExecStart=/home/andy/software/pysmartthingsmon/webservice/venv/bin/gunicorn --workers 3 --bind=0.0.0.0:5001 -m007 --timeout=1000 wsgi:app
+
+[Install]
+WantedBy=default.target

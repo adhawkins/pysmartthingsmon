@@ -1,0 +1,7 @@
+aiohttp
+click
+google-api-python-client
+google-auth[reauth]
+google-auth-oauthlib
+pysmartthings
+requests
