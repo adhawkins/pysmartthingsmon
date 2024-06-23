@@ -83,14 +83,13 @@ class WebService:
 
         return None
 
-    def addReading(self, room_id, ambient, set_point=None, humidity=None, state=None, away=None):
+    def addReading(self, room_id, ambient, set_point=None, humidity=None, state=None):
         reading = {
             "room_id": room_id,
             "set_point": set_point,
             "ambient": ambient,
             "humidity": humidity,
             "state": state,
-            "away": away,
         }
 
         response = requests.post(

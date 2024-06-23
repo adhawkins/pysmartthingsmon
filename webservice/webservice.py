@@ -355,7 +355,6 @@ reading_fields = api.model(
         "ambient": fields.Float,
         "humidity": fields.Float,
         "state": fields.String,
-        "away": fields.Integer,
     },
 )
 
@@ -402,13 +401,6 @@ readingInfoArgs.add_argument(
     help="No state provided",
     location="json",
 )
-readingInfoArgs.add_argument(
-    "away",
-    type=int,
-    required=False,
-    help="No away provided",
-    location="json",
-)
 
 
 @api.route(f"{API_BASE}/readings", endpoint="readings_list")
@@ -440,9 +432,6 @@ class ReadingsListAPI(Resource):
 
             if "state" in args:
                 reading.state = args["state"]
-
-            if "away" in args:
-                reading.away = args["away"]
 
             db.session.add(reading)
             db.session.commit()

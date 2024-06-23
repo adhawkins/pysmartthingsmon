@@ -45,6 +45,5 @@ class Readings(Base):
     ambient: Mapped[float]
     humidity: Mapped[float] = mapped_column(nullable=True)
     state: Mapped[str] = mapped_column(nullable=True)
-    away: Mapped[int] = mapped_column(nullable=True)
 
     roomdetails: Mapped["Rooms"] = relationship()
