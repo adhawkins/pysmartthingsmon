@@ -2,13 +2,31 @@ from sqlalchemy import DateTime, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.exc import List
-from sqlalchemy.types import TypeDecorator
+from sqlalchemy.types import TypeDecorator, Float
 
 import datetime
 
 from .Base import Base
 
 from pprint import pprint
+
+
+class RoundedFloat(TypeDecorator):
+    impl = Float
+    cache_ok = True
+
+    @staticmethod
+    def roundFloat(value):
+        if value is not None:
+            value = round(value * 2) / 2
+
+        return value
+
+    def process_bind_param(self, value, dialect):
+        return RoundedFloat.roundFloat(value)
+
+    def process_result_value(self, value, dialect):
+        return RoundedFloat.roundFloat(value)
 
 
 class TZDateTime(TypeDecorator):
@@ -41,9 +59,9 @@ class Readings(Base):
     )
     timestamp: Mapped[DateTime] = mapped_column(
         TZDateTime, server_default=func.now())
-    set_point: Mapped[float] = mapped_column(nullable=True)
-    ambient: Mapped[float]
-    humidity: Mapped[float] = mapped_column(nullable=True)
+    set_point: Mapped[float] = mapped_column(RoundedFloat, nullable=True)
+    ambient: Mapped[float] = mapped_column(RoundedFloat)
+    humidity: Mapped[float] = mapped_column(RoundedFloat, nullable=True)
     state: Mapped[str] = mapped_column(nullable=True)
 
     roomdetails: Mapped["Rooms"] = relationship()
