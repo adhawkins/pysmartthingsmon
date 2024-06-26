@@ -403,12 +403,24 @@ readingInfoArgs.add_argument(
 )
 
 
+def toDate(dateString):
+    return datetime.strptime(dateString, "%Y-%m-%d").astimezone()
+
+
 @api.route(f"{API_BASE}/readings", endpoint="readings_list")
 class ReadingsListAPI(Resource):
     @auth.login_required
     @api.marshal_list_with(reading_fields, envelope="readings")
     def get(self):
+        date = request.args.get("date", default=None, type=toDate)
+
         query = db.select(Database.Readings)
+        if date:
+            startDate = date - timedelta(minutes=1)
+            endDate = date + timedelta(days=1, minutes=1)
+
+            query = query.where(Database.Readings.timestamp >= startDate)
+            query = query.where(Database.Readings.timestamp < endDate)
 
         readings = db.session.execute(query).scalars()
 
