@@ -413,6 +413,7 @@ class ReadingsListAPI(Resource):
     @api.marshal_list_with(reading_fields, envelope="readings")
     def get(self):
         date = request.args.get("date", default=None, type=toDate)
+        rooms = request.args.getlist("room")
 
         query = db.select(Database.Readings)
         if date:
@@ -421,6 +422,9 @@ class ReadingsListAPI(Resource):
 
             query = query.where(Database.Readings.timestamp >= startDate)
             query = query.where(Database.Readings.timestamp < endDate)
+
+        if rooms:
+            query = query.where(Database.Readings.room_id.in_(rooms))
 
         readings = db.session.execute(query).scalars()
 
