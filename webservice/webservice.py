@@ -360,6 +360,13 @@ reading_fields = api.model(
 
 readingInfoArgs = api.parser()
 readingInfoArgs.add_argument(
+    "timestamp",
+    type=str,
+    required=False,
+    help="No timestamp provided",
+    location="json",
+)
+readingInfoArgs.add_argument(
     "room_id",
     type=str,
     required=True,
@@ -440,6 +447,11 @@ class ReadingsListAPI(Resource):
             reading = Database.Readings(
                 room_id=args["room_id"], ambient=args["ambient"]
             )
+
+            if "timestamp" in args and args['timestamp']:
+                timestamp = datetime.fromisoformat(
+                    args['timestamp']).astimezone()
+                reading.timestamp = timestamp
 
             if "set_point" in args:
                 reading.set_point = args["set_point"]
