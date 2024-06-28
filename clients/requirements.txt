@@ -3,5 +3,6 @@ click
 google-api-python-client
 google-auth[reauth]
 google-auth-oauthlib
+mysql-connector-python
 pysmartthings
 requests

@@ -83,7 +83,7 @@ class WebService:
 
         return None
 
-    def addReading(self, room_id, ambient, set_point=None, humidity=None, state=None):
+    def addReading(self, room_id, ambient, timestamp=None, set_point=None, humidity=None, state=None):
         reading = {
             "room_id": room_id,
             "set_point": set_point,
@@ -92,10 +92,22 @@ class WebService:
             "state": state,
         }
 
+        if timestamp:
+            reading['timestamp'] = timestamp.isoformat()
+
         response = requests.post(
             f"{self.baseURL}readings", auth=self.basicAuth, json=reading)
 
         if response:
             return response.json()["reading"]
+
+        return None
+
+    def readings(self):
+        url = f"{self.baseURL}readings"
+
+        response = requests.get(url, auth=self.basicAuth)
+        if response:
+            return response.json()["readings"]
 
         return None
