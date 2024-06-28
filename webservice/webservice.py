@@ -415,7 +415,8 @@ class ReadingsListAPI(Resource):
         date = request.args.get("date", default=None, type=toDate)
         rooms = request.args.getlist("room")
 
-        query = db.select(Database.Readings)
+        query = db.select(Database.Readings).order_by(
+            Database.Readings.timestamp)
         if date:
             startDate = date - timedelta(minutes=1)
             endDate = date + timedelta(days=1, minutes=1)
