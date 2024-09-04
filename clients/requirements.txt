@@ -6,3 +6,4 @@ google-auth-oauthlib
 mysql-connector-python
 pysmartthings
 requests
+tapo
